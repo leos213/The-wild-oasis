@@ -1,9 +1,10 @@
 import { Suspense } from "react";
 import CabinList from "../_components/CabinList";
 import Spinner from "../_components/Spinner";
+import Filter from "../_components/Filter";
 
 // thiis is ISR (Incremental Static Regeneration) this time invalidate every 0 second
-// supabase-ში როდესაც ოთახს ვუცვლიდი ღრებულებას მაშინვე იცვლება
+// supabase-ში როდესაც ოთახს ვუცვლიდი ღირებულებას მაშინვე იცვლება
 // revalidate-ი თუარ იქნება სტატიკური ერთი რენდერის გამო ვერ ცვლის
 
 // export const revalidate = 0;
@@ -12,9 +13,10 @@ export const metadata = {
   title: "Cabins",
 };
 
-export default async function Page() {
+export default async function Page({ searchParams }) {
   // CHANGE
-
+  console.log(searchParams);
+  const filter = searchParams?.capacity ?? "all";
   return (
     <div>
       <h1 className="text-4xl mb-5 text-accent-400 font-medium">
@@ -28,11 +30,15 @@ export default async function Page() {
         away from home. The perfect spot for a peaceful, calm vacation. Welcome
         to paradise.
       </p>
+
+      <div className="flex justify-end mb-8">
+        <Filter />
+      </div>
       {/* Suspense-ი როდესაც კომპონენტი არ არის მზად რენდერისთვის ( მაგ: fetch და loading-ის დროს ) 
       ასრულებს loading-ის ფუნქციას, მაგ: spinner - ს აჩვენებს სანამ დარენდერდება. მაგრამ სხვა კომპონენტი უკვე ჩატვირთული იქნება. 
-      ამ შემთხვევაში სპინერი გამოჩნდება მხოლოდ cabin-ბში */}
-      <Suspense fallback={<Spinner />}>
-        <CabinList />
+      ამ შემთხვევაში სპინერი გამოჩნდება მხოლოდ cabin-ბში.*/}
+      <Suspense fallback={<Spinner />} key={filter}>
+        <CabinList filter={filter} />
       </Suspense>
     </div>
   );
